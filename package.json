@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy public"
   },
   "dependencies": {
     "wrangler": "^3.0.0"
