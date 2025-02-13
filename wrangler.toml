@@ -1,0 +1,13 @@
+name = "ai-chat-api"
+main = "main.py"
+compatibility_date = "2024-01-01"
+
+[vars]
+# These will be set in the Cloudflare dashboard
+# OPENAI_API_KEY
+# ANTHROPIC_API_KEY
+# DEEPSEEK_API_KEY
+
+[[routes]]
+pattern = "somefar.com/*"
+zone_id = "" # You'll need to add your Cloudflare zone ID here 
