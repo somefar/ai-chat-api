@@ -1,6 +1,7 @@
 name = "ai-chat-api"
 main = "main.py"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["python_workers"]
 
 [vars]
 # These will be set in the Cloudflare dashboard
@@ -10,4 +11,4 @@ compatibility_date = "2024-01-01"
 
 [[routes]]
 pattern = "somefar.com/*"
-zone_id = "" # You'll need to add your Cloudflare zone ID here 
+zone_id = "2c715b4cf31c01fe44dce3c18a075528" # You'll need to add your Cloudflare zone ID here 

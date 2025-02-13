@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -6,7 +6,6 @@ import os
 import openai
 from anthropic import Anthropic
 import httpx
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -24,18 +23,10 @@ class ChatRequest(BaseModel):
     model: str  # "gpt", "claude", or "deepseek"
     conversation_id: Optional[str] = None
 
-# Initialize API clients (now using environment variables directly)
-def get_openai_client():
-    return openai.Client(api_key=os.environ.get("OPENAI_API_KEY"))
-
-def get_anthropic_client():
-    return Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-
-@app.post("/api/chat")
-async def chat(request: ChatRequest):
+async def handle_chat(request: ChatRequest):
     try:
         if request.model == "gpt":
-            client = get_openai_client()
+            client = openai.Client(api_key=os.environ.get("OPENAI_API_KEY"))
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": request.message}]
@@ -43,7 +34,7 @@ async def chat(request: ChatRequest):
             return {"response": response.choices[0].message.content}
             
         elif request.model == "claude":
-            client = get_anthropic_client()
+            client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
             response = client.messages.create(
                 model="claude-3-sonnet-20240229",
                 max_tokens=1024,
@@ -67,14 +58,23 @@ async def chat(request: ChatRequest):
                 result = response.json()
                 return {"response": result["choices"][0]["message"]["content"]}
         else:
-            raise HTTPException(status_code=400, detail="Invalid model specified")
+            return {"error": "Invalid model specified"}, 400
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"error": str(e)}, 500
 
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy"}
 
-def onRequest(context):
+@app.post("/api/chat")
+async def chat_endpoint(request: Request):
+    try:
+        data = await request.json()
+        chat_request = ChatRequest(**data)
+        return await handle_chat(chat_request)
+    except Exception as e:
+        return {"error": str(e)}, 400
+
+async def onRequest(context):
     return app 

@@ -6,7 +6,6 @@ import os
 import openai
 from anthropic import Anthropic
 import httpx
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -24,7 +23,7 @@ class ChatRequest(BaseModel):
     model: str  # "gpt", "claude", or "deepseek"
     conversation_id: Optional[str] = None
 
-# Initialize API clients (now using environment variables directly)
+# Initialize API clients
 def get_openai_client():
     return openai.Client(api_key=os.environ.get("OPENAI_API_KEY"))
 
