@@ -1,16 +1,30 @@
+from typing import Dict, Any
 import os
 import json
 from openai import OpenAI
 from anthropic import Anthropic
 import httpx
 
+def create_response(body: Dict[str, Any], status: int = 200) -> Dict[str, Any]:
+    return {
+        "body": json.dumps(body),
+        "statusCode": status,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "https://somefar.com",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+    }
+
 async def onRequest(context):
-    # Get request method
+    # Handle preflight requests
     if context.request.method == "OPTIONS":
-        return new_response({"status": "ok"}, 200)
+        return create_response({"status": "ok"}, 200)
     
+    # Only allow POST requests
     if context.request.method != "POST":
-        return new_response({"error": "Method not allowed"}, 405)
+        return create_response({"error": "Method not allowed"}, 405)
 
     try:
         # Parse request body
@@ -19,7 +33,7 @@ async def onRequest(context):
         model = body.get("model")
 
         if not message or not model:
-            return new_response({"error": "Missing message or model"}, 400)
+            return create_response({"error": "Missing message or model"}, 400)
 
         # Handle different models
         if model == "gpt":
@@ -28,7 +42,7 @@ async def onRequest(context):
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": message}]
             )
-            return new_response({"response": response.choices[0].message.content})
+            return create_response({"response": response.choices[0].message.content})
 
         elif model == "claude":
             client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
@@ -37,7 +51,7 @@ async def onRequest(context):
                 max_tokens=1024,
                 messages=[{"role": "user", "content": message}]
             )
-            return new_response({"response": response.content[0].text})
+            return create_response({"response": response.content[0].text})
 
         elif model == "deepseek":
             async with httpx.AsyncClient() as client:
@@ -53,21 +67,9 @@ async def onRequest(context):
                     }
                 )
                 result = response.json()
-                return new_response({"response": result["choices"][0]["message"]["content"]})
+                return create_response({"response": result["choices"][0]["message"]["content"]})
         else:
-            return new_response({"error": "Invalid model specified"}, 400)
+            return create_response({"error": "Invalid model specified"}, 400)
 
     except Exception as e:
-        return new_response({"error": str(e)}, 500)
-
-def new_response(body, status=200):
-    return Response(
-        json.dumps(body),
-        status=status,
-        headers={
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "https://somefar.com",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-        }
-    ) 
+        return create_response({"error": str(e)}, 500) 
