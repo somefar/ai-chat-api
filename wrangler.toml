@@ -19,5 +19,4 @@ zone_id = "2c715b4cf31c01fe44dce3c18a075528"
 
 # Pages configuration
 [site]
-bucket = "./public"
-entry-point = "_worker.js" 
+bucket = "./public" 
