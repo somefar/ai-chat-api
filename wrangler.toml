@@ -2,19 +2,14 @@ name = "ai-chat-api"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
 
-[vars]
-# These will be set in the Cloudflare dashboard
-# OPENAI_API_KEY
-# ANTHROPIC_API_KEY
-# DEEPSEEK_API_KEY
-
-OPENAI_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
-ANTHROPIC_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
-DEEPSEEK_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
+# These will be overridden by the values set in the Cloudflare dashboard
+OPENAI_API_KEY = "sk-dummy" # Will be overridden by dashboard value
+ANTHROPIC_API_KEY = "sk-dummy" # Will be overridden by dashboard value
+DEEPSEEK_API_KEY = "sk-dummy" # Will be overridden by dashboard value
 
 # Workers configuration
 [[routes]]
-pattern = "api/*"
+pattern = "/api/*"
 zone_id = "2c715b4cf31c01fe44dce3c18a075528"
 
 # Pages configuration
