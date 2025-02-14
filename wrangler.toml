@@ -12,9 +12,12 @@ OPENAI_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
 ANTHROPIC_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
 DEEPSEEK_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
 
+# Workers configuration
 [[routes]]
-pattern = "somefar.com/*"
-zone_id = "2c715b4cf31c01fe44dce3c18a075528" # You'll need to add your Cloudflare zone ID here 
+pattern = "api/*"
+zone_id = "2c715b4cf31c01fe44dce3c18a075528"
 
 # Pages configuration
-pages_build_output_dir = "public" 
+[site]
+bucket = "./public"
+entry-point = "_worker.js" 
