@@ -212,6 +212,11 @@
                     })
                 });
 
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 
                 // Remove loading message
@@ -225,6 +230,7 @@
             } catch (error) {
                 removeLoadingMessage();
                 addMessage(`Error: ${error.message}`, 'error');
+                console.error('Error:', error);
             } finally {
                 isLoading = false;
                 sendButton.disabled = false;

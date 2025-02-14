@@ -15,3 +15,6 @@ DEEPSEEK_API_KEY = "sk-*****"  # Will be overridden by the dashboard value
 [[routes]]
 pattern = "somefar.com/*"
 zone_id = "2c715b4cf31c01fe44dce3c18a075528" # You'll need to add your Cloudflare zone ID here 
+
+# Pages configuration
+pages_build_output_dir = "public" 
